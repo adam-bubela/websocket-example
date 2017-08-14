@@ -1,0 +1,31 @@
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+      .pt{
+        position: absolute;
+        background: blue;
+        padding: 3px 5px;
+        margin-left: 3px;
+        box-shadow: 2px 2px 2px #000;
+        text-shadow: 1px 1px 1px #000;
+        font-weight: bold;
+        color: #fff;
+        --width: 20px;
+        --height: 20px;
+        border-radius: 3px;
+      }
+      #point{
+        position: absolute;
+        border:1px solid red;
+        background: blue;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+      }
+    

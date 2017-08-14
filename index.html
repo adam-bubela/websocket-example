@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link href="/index.css" type="text/css" rel="stylesheet"/>
+  </head>
+  <body>
+    
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io-1.2.0.js"></script>
+    <script src="/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io(),
+          pageX=0,
+          pageY=0;
+
+        const nick =  location.hash.replace('#','')||('u'+Math.floor(Math.random()*10000));
+        const bgColour = getRandomColor();
+        $(document).on( "mousemove", function( event ) {
+          pageX = event.pageX;
+          pageY = event.pageY;
+          socket.emit('mousemove', {
+            pageX: pageX,
+            pageY: pageY,
+            nick: nick
+          });
+           //$( "#log" ).text( "pageX: " + event.pageX + ", pageY: " + event.pageY );
+        });
+       
+        socket.on('mousemove',function(messages){
+         
+            for(let m in messages){
+              let msg = messages[m];
+              //console.log(msg);
+              let nick = msg.nick;
+              
+              
+              if(!document.getElementById(nick))
+                  $('body').append(
+                              $(`<div id="${nick}">`).
+                              addClass('pt').
+                              text(nick)
+                            );
+              
+              //console.log((Math.abs(msg.pageX-pageX) + Math.abs(msg.pageY-pageY))/2);
+              $('#'+nick).css({
+                left:msg.pageX,
+                top:msg.pageY,
+                background:msg.color});
+                //console.log('background',msg.color)
+            }
+        });
+        $(window).load(function() {
+          socket.emit('adduser', {
+            pageX: pageX,
+            pageY: pageY,
+            nick: nick,
+            color: bgColour
+          });
+        });  
+        $(window).on('beforeunload',function() {
+          socket.emit('removeuser', nick);
+        });
+
+
+
+        $('form').submit(function(){
+          let msg = $('#m').val();
+          socket.emit('chat message', `<span style="color:${bgColour}"><b>${nick} &gt;</b> ${msg}</span>`);
+          $('#m').val('');
+          return false;
+        });
+
+        socket.on('chat message', function(msg){
+          $('#messages').append($('<li>').html(msg));
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        socket.on('removeuser', function(nick){
+           $('#'+nick).remove();
+        });
+      });
+
+      function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+    </script>
+  </body>
+</html>
